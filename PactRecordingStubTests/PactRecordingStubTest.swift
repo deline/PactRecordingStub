@@ -14,27 +14,33 @@ import Nimble
 class PactRecordingStubTest: XCTestCase {
 
     let networkService = NetworkService()
+    let recordingStub = PactRecordingStub(outputPath: "/tmp/my-output-file.json")
+    
 
     func testRecordsInteractions() {
 
-        let recordingStub = PactRecordingStub()
-        
-        recordingStub.interaction().whenRequest().respondWith("Hello Matthew")
+        recordingStub.interaction("Interaction 1").whenRequest().respondWith("Hello there")
 
         var result: String?
         networkService.makeNetworkCall {
-            response in
-            debugPrint("******************\(response)")
-            result = response
+            result = $0
         }
 
-        expect(result).toEventuallyNot(beNil(), timeout: 5);
-
-        
+        expect(result).toEventually(equal("Hello there"));
         recordingStub.finishInteraction()
         
-
+        
+        
+        //Second interaction
+        recordingStub.interaction("Interaction 2").whenRequest().respondWith("Good night")
+        
+        result = nil
+        networkService.makeNetworkCall {
+            response in
+            result = response
+        }
+        
+        recordingStub.finishInteraction()
+        expect(result).toEventually(equal("Good night"));
     }
-
-
 }

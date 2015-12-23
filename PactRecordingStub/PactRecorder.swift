@@ -8,18 +8,18 @@
 import Foundation
 
 class PactRecorder {
-    var noRecording = false
-    let pactPublishPath: String
-    let interactions = [String: String]()
-    
+    private var noRecording = false
+    private let pactPublishPath: String
+    private let interactions = [String: String]()
+
     init(pactPublishPath: String) {
         self.pactPublishPath = pactPublishPath
     }
-    
-    func startTest() {
-        interactions
+
+    convenience init() {
+        self.init(pactPublishPath: "/tmp/pact.json")
     }
-    
+
     func publish() {
         let text = "Some text that \nspans multiple lines and \tincludes a tab-space."
         

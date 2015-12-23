@@ -10,7 +10,7 @@ import OHHTTPStubs
 import OHHTTPStubs.Swift
 
 protocol PactRecordingStubInteraction {
-    func interaction() -> PactRecordingStubRequest
+    func interaction(name: String) throws -> PactRecordingStubRequest
 }
 
 protocol PactRecordingStubRequest {
@@ -24,12 +24,30 @@ protocol PactRecordingStubResponse {
 
 public class PactRecordingStub: PactRecordingStubInteraction, PactRecordingStubRequest, PactRecordingStubResponse {
 
-    func interaction() -> PactRecordingStubRequest {
+    private let pactRecorder: PactRecorder
+    var interactionStarted = false;
+    
+    init() {
+        pactRecorder = PactRecorder()
+    }
+    
+    init(outputPath: String) {
+        pactRecorder = PactRecorder(pactPublishPath: outputPath)
+    }
+
+    func interaction(name: String) -> PactRecordingStubRequest {
+        guard !interactionStarted else {
+            preconditionFailure("interaction() started without calling finishInteraction() on previous interaction")
+        }
+
+        
+        interactionStarted = true;
         return self
     }
     
     func finishInteraction() {
-        
+        interactionStarted = false
+        pactRecorder.publish()
     }
 
     func whenRequest() -> PactRecordingStubResponse {
