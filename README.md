@@ -1,6 +1,6 @@
 # PactRecordingStub
 
-* ##Still under development *
+*Still under development*
 
 PactRecordingStub allows you to generate a Pact consumer contract for your expected request/response interactions.
 
